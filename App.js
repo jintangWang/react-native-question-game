@@ -16,7 +16,7 @@ import {
     StatusBar
 } from 'react-native';
 
-import Resource from './src/resource';
+import Resource from './src/utils/resource';
 
 console.disableYellowBox = true;
 
@@ -35,7 +35,7 @@ export default class App extends Component {
         StatusBar.setHidden(true);
     }
 
-    handleCanvas = (canvas) => {
+    handleCanvas = async (canvas) => {
         canvas.width = width;
         canvas.height = height;
         const ctx = canvas.getContext('2d');
@@ -63,12 +63,21 @@ export default class App extends Component {
       global.ctx.clearRect(0, 0, width, height);
     };
 
-    canvasOnPress = (e) => {
+    inArea = (e, area) => {
         let {locationX, locationY} = e.nativeEvent;
-        let btnImgX = (width - btnImg.width / 2);
-        let btnImgY = logoImg.height / 2 + homeImg.height / 2 + 60;
-        if (locationX >= (width - btnImg.width / 2) / 2 && locationX <= (width - btnImg.width / 2) / 2 + btnImg.width / 2 &&
-            locationY >= logoImg.height / 2 + homeImg.height / 2 + 60 && locationY <= logoImg.height / 2 + homeImg.height / 2 + 60 ) {}
+        if (locationX >= area.x && locationX <= area.x + area.width &&
+            locationY >= area.y && locationY <= area.y + area.height) {
+            return true;
+        }
+        return false;
+    };
+
+    canvasOnPress = (e) => {
+        // if (this.inArea(e, btnImg)) {
+        //
+        // } else if (this.inArea(e, rankImg)) {
+        //
+        // }
     };
 
     render() {

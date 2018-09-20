@@ -1,3 +1,4 @@
+import {Platform} from 'react-native';
 import images from '../data/resources';
 import {Image as CanvasImage} from "react-native-canvas";
 import RNFS from "react-native-fs";
@@ -17,10 +18,20 @@ export default class Resource {
         });
     }
 
-    loadAll(callback = () => {}) {
+    _copyAndroidAsset(imgName, callback) {
+        RNFS.copyFileAssets(imgName, `${RNFS.DocumentDirectoryPath}/imgName`).then(() => {
+            callback();
+        });
+    }
+
+    async loadAll(callback = () => {}) {
         for (let i in images) {
             let img = new CanvasImage(global.canvas);
-            img.src = `${RNFS.MainBundlePath}${images[i]}`;
+            if (Platform.OS === 'ios') {
+                img.src = `${RNFS.MainBundlePath}/assets/${images[i]}`;
+            } else {
+                img.src = `file:///android_asset/${images[i]}`;
+            }
             this.imagesObj[i] = img;
             this._addLoadEvent(img, callback);
         }
@@ -31,7 +42,6 @@ export default class Resource {
     }
 
     drawImage(img, x = 0, y = 0, width = 0, height = 0) {
-        // console.log(arguments)
         global.ctx.drawImage(img, x, y, width, height);
         return {
             x, y, width, height
